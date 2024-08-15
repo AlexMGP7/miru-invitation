@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date with Miru</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* Common Styles */
+body {
+    background-color: #ffd1dc;
+    color: black;
+    font-family: 'Open Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Prevent scrollbars from appearing */
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: black;
+    color: white;
+}
+
+button {
+    border: none;
+    padding: 15px 25px;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    font-family: 'Roboto', sans-serif;
+    margin-top: 20px;
+}
+
+p {
+    text-align: center;
+    font-size: 32px;
+    font-family: 'Open Sans', sans-serif;
+    margin-top: 20px;
+}
+
+img {
+    margin-top: 20px;
+    width: 25%;
+    transition: all 0.3s ease;
+}
+
+.toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    background-color: #ccc;
+    border-radius: 34px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.toggle::after {
+    content: "";
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: white;
+    transition: transform 0.3s ease;
+}
+
+.toggle.dark-mode::after {
+    transform: translateX(30px);
+}
+
+.toggle.dark-mode {
+    background-color: #555;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.emoji {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0;
+    animation: float 4s ease-in infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-200px);
+        opacity: 0;
+    }
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+    }
+    p {
+        font-size: 24px;
+    }
+    img {
+        width: 50%;
+    }
+}
+
+/* Styles for final proposal on small screens */
+@media (max-width: 768px) {
+    .final-text {
+        font-size: 20px;
+    }
+    .final-gif {
+        width: 80%;
+    }
+    .additional-text {
+        font-size: 16px;
+        text-align: center;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<h1>Holaaa señorita 👀</h1>
+<p id="text-sequence">¿Me concedería algo de su tiempo?</p>
+<img id="image" src="https://media.tenor.com/zGm5acSjHCIAAAAM/cat-begging.gif">
+
+<div class="toggle" onclick="toggleTheme()"></div>
+
+<div class="buttons-container">
+    <button id="accept-btn" onclick="nextText()">Sipi</button>
+    <button id="cancel-btn" onclick="moveButton()">Nop</button>
+</div>
+
+<audio id="proposal-audio" src="y2mate (mp3cut.net).mp3"></audio>
+
+<script>
+// Toggle Theme Function
+function toggleTheme() {
+    const body = document.body;
+    body.classList.toggle('dark-mode');
+    const toggle = document.querySelector('.toggle');
+    toggle.classList.toggle('dark-mode');
+}
+
+// Sequence of texts
+const texts = [
+    "Seguramente te guste",
+    "¿Si? Aquí voy..."
+];
+
+let currentIndex = 0;
+function nextText() {
+    const textElement = document.getElementById('text-sequence');
+    if (currentIndex < texts.length) {
+        textElement.innerText = texts[currentIndex];
+        currentIndex++;
+    } else {
+        textElement.innerText = "Me permitiría salir con usted este miércoles 21?";
+        textElement.classList.add('final-text');
+        document.getElementById('image').style.display = 'block'; // Mostrar la imagen
+        document.getElementById('image').classList.add('final-gif'); // Agrandar la imagen solo en móviles
+        document.getElementById('accept-btn').innerText = "Si mi lord";
+        addEmojis(); // Call function to add emoji animations
+        playAudio(); // Play the proposal audio
+
+        // Mostrar el mensaje inicial "Habrá heladito de unicornio y mucho más"
+        showAdditionalText();
+
+        // Cambiar la función del botón para que muestre el mensaje final en el siguiente clic
+        document.getElementById('accept-btn').onclick = replaceWithFinalMessage;
+    }
+}
+
+// Función para mostrar el mensaje de "Habrá heladito de unicornio y mucho más"
+function showAdditionalText() {
+    if (!document.querySelector('.additional-text')) {
+        const additionalText = document.createElement('p');
+        additionalText.innerText = "✨✨ Habrá heladito de unicornio y mucho más ✨✨";
+        additionalText.style.marginTop = "20px";
+        additionalText.classList.add('additional-text'); // Reducir el tamaño del texto solo en móviles
+        document.body.appendChild(additionalText);
+    }
+}
+
+// Función para reemplazar el mensaje con "Nos vemos ese día entonces 😊"
+function replaceWithFinalMessage() {
+    const additionalTextElement = document.querySelector('.additional-text');
+    if (additionalTextElement) {
+        additionalTextElement.innerText = "Nos vemos ese día entonces, little princess 👑";
+        additionalTextElement.classList.remove('additional-text');
+        additionalTextElement.classList.add('final-message'); // Cambiar la clase para el mensaje final
+    }
+
+    // Desactivar el botón después de mostrar el mensaje final
+    document.getElementById('accept-btn').disabled = true;
+}
+
+
+// Function to play the proposal audio
+function playAudio() {
+    const audio = document.getElementById('proposal-audio');
+    audio.play();
+}
+
+// Function to add emoji animations
+// Function to add emoji animations in multiple areas of the screen
+function addEmojis() {
+    const emojis = ['✨', '💖', '😊', '🌸', '🎉', '🥳', '🎶', '🌟', '💫', '❤️'];
+    const numberOfEmojis = 20; // Number of emojis to display
+
+    for (let i = 0; i < numberOfEmojis; i++) {
+        const emojiElement = document.createElement('div');
+        emojiElement.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+        emojiElement.classList.add('emoji');
+        emojiElement.style.left = `${Math.random() * 100}%`;
+        emojiElement.style.top = `${Math.random() * 100}%`; // Place emojis randomly on the screen
+        emojiElement.style.fontSize = `${Math.random() * 20 + 20}px`; // Random font size for variety
+        document.body.appendChild(emojiElement);
+
+        // Remove emoji after animation
+        setTimeout(() => {
+            document.body.removeChild(emojiElement);
+        }, 4000);
+    }
+}
+
+
+// Initial setup
+document.getElementById('image').style.display = 'none'; // Hide the image initially
+
+// Function to move the "No" button and enlarge the "Yes" button
+function moveButton() {
+    const button2 = document.getElementById('cancel-btn');
+    const button1 = document.getElementById('accept-btn');
+    
+    let randomX = Math.random() * 200 - 100; // Random X position between -100 and 100
+    let randomY = Math.random() * 200 - 100; // Random Y position between -100 and 100
+    
+    button2.style.transform = `translate(${randomX}px, ${randomY}px)`;
+
+    // Enlarge the "Yes" button
+    button1.style.transform = "scale(1.2)";
+    setTimeout(() => {
+        button1.style.transform = "scale(1)";
+    }, 300);
+}
+
+</script>
+
+</body>
+</html>
